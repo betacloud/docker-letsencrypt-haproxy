@@ -13,8 +13,8 @@ ENV VIRTUAL_HOST="*/.well-known/acme-challenge/*"
 ENV VIRTUAL_HOST_WEIGHT="999"
 ENV PATH="/opt/letsencrypt/bin:$PATH"
 
-COPY files/entrypoint.sh /opt/letsencrypt/entrypoint.sh
-COPY files/update-certs.sh /opt/letsencrypt/update-certs.sh
+COPY files/entrypoint.sh /opt/letsencrypt/bin/entrypoint.sh
+COPY files/update-certs.sh /opt/letsencrypt/bin/update-certs.sh
 
 # make sure we update certificates daily
 RUN ln -fs /opt/letsencrypt/bin/update-certs.sh /etc/periodic/daily/
