@@ -1,4 +1,4 @@
-FROM dockercloud/haproxy:1.6.2
+FROM dockercloud/haproxy:1.6.7
 MAINTAINER Betacloud Solutions GmbH (https://www.betacloud-solutions.de)
 
 RUN apk add --update --no-cache bash inotify-tools openssl \
