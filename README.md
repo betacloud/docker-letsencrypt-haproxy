@@ -1,92 +1,30 @@
-# How to use it
+# docker-letsencrpyt-haproxy
 
-```
-version: "2"
-services:
-  haproxy:
-    image: m21lab/haproxy:1.6.2
-    links:
-      - letsencrypt
-      - web ## THIS IS THE SERVICE HOSTED BEHIND THE NEW CERTIFICATE
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    volumes_from:
-      - letsencrypt
-  letsencrypt:
-    image: m21lab/letsencrypt:1.0
-    environment:
-      - DOMAINS=YOUR_DOMAIN
-      - EMAIL=admins@YOUR_DOMAIN
-      - LOAD_BALANCER_SERVICE_NAME=haproxy
-      # THIS IS CRUCIAL WHEN TESTING to avoid reaching
-      # the 5 certificates limit per domain per week. 
-      # You'll end up waiting a week before being able 
-      # to regenerate a valid cert if you don't backup
-      # the once generated
-      - OPTIONS=--staging
+[![Docker Hub](https://img.shields.io/badge/Docker%20Hub-osism%2Fletsencrypt--haproxy-blue.svg)](https://hub.docker.com/r/osism/lesencrypt-haproxy/)
 
-  web:
-    environment:
-      - FORCE_SSL=yes
-      - VIRTUAL_HOST=http://*,https://*
-    image: dockercloud/hello-world:latest
-```
-# Overview
+License
+-------
 
-The `haproxy` image will:
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
-  * Create a self signed default certificate, so HAproxy can start before we
-    have any real certificates.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
-  * Watch the `/etc/letsencrypt/live` directory and when changes are detected,
-  	install combined certificates and reload HAproxy.
+Author information
+------------------
 
-The `letsencrypt` image will:
+This Docker image was provided by [Betacloud Solutions GmbH](https://www.betacloud-solutions.de).
 
-  * Automatically create or renew certificates on startup and daily thereafter.
+Based on https://github.com/cnadeau/letsencrypt-dockercloud-haproxy.
 
-# Usage
+Notices
+-------
 
-In your stack file:
-
-  * Link to the `letsencrypt` service from the `haproxy` service.
-
-  * Use `volumes_from: letsencrypt` in the `haproxy` service.
-
-  * Define a `DOMAINS` environment variable in the `letsencrypt` service.
-    Certificates are separated by semi-colon (;) and domains are separated by
-    comma (,).
-
-  * Define an `EMAIL` environment variable in the `letsencrypt` service. It
-    will be used for all certificates.
-
-  * Define an `OPTIONS` environment variable in the `letsencrypt` service, if
-    you want to pass additional arguments to `certbot` (e.g. `--staging`).
-
-    ***VERY IMPORTANT***
-
-    Make sure you set the environment variable OPTIONS: --staging on the letsencrypt
-    service  until you are 100% sure you are configured properly and you want to get
-    a real certificate. Otherwise you’ll reache the 5 certificates limit per domain
-    per week and you’ll end up waiting a week before being able to regenerate a valid
-    certificate if you didn’t backup the ones already generated
-
-  * Define an `LOAD_BALANCER_SERVICE_NAME` environment variable in the
-    `letsencrypt` service. It is used to wait for this service to be listening
-    on port 80 before starting the `letsencrypt` service.
-
-Several environment variables are hard coded, and don't need to be defined in
-your stack file:
-
-  * The `DEFAULT_SSL_CERT` environment variable is set to the value of the
-  	default/first Let's Encrypt certificate (if not already explicitly set),
-  	to ensure SSL termination is enabled.
-
-  * The `VIRTUAL_HOST` and `VIRTUAL_HOST_WEIGHT` environment variables are hard
-    coded in the `letsencrypt` image, to ensure challenge requests for all
-    domains are proxied to the `letsencrypt` service.
-
-A sample stack file is provided.
+Docker and the Docker logo are trademarks or registered trademarks of Docker, Inc. in the
+United States and/or other countries. Docker, Inc. and other parties may also have trademark
+rights in other terms used herein.
