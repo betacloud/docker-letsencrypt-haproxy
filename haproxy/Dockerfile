@@ -1,6 +1,9 @@
 FROM dockercloud/haproxy:1.6.7
 MAINTAINER Betacloud Solutions GmbH (https://www.betacloud-solutions.de)
 
+ARG VERSION
+ENV VERSION ${VERSION:-1.6.7}
+
 RUN apk add --update --no-cache bash inotify-tools openssl \
 	&& rm -rf /var/cache/apk/*
 

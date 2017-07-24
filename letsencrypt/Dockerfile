@@ -1,6 +1,9 @@
 FROM alpine:3.6
 MAINTAINER Betacloud Solutions GmbH (https://www.betacloud-solutions.de)
 
+ARG VERSION
+ENV VERSION ${VERSION:-latest}
+
 RUN apk add --update --no-cache bash certbot tini \
 	&& rm -rf /var/cache/apk/*
 
